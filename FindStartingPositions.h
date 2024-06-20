@@ -2,29 +2,45 @@
 #define GRAPH_DRAWING_FINDSTARTINGPOSITIONS_H
 
 #include "graph.h"
-const double INITIAL_TEMPERATURE = 1000;
-const double ALPHA_COEFFICIENT = 0.003;
+#include <cstdlib>
+#include <ctime>
+const double INITIAL_TEMPERATURE = 5000;
+const double ALPHA_COEFFICIENT = 0.9997;
 const int MAX_ITERATIONS = 10000;
+
+using Point = std::pair<float,float>;
+using State = std::vector<Point>;
 
 class FindStartingPositions {
 private:
     Graph * graph;
+    std::vector<std::pair<int,int>> edgeList;
     double temperature;
     double alpha;
-    std::vector<std::pair<float,float>> best;
-    std::vector<std::pair<float,float>> currentState;
-    std::vector<std::pair<float,float>> neighborState;
+    State best;
+    State currentState;
+    State neighborState;
     float minimalCost;
     float currentCost;
     float neighborCost;
     int iteration;
+    int maxX;
+    int maxY;
+    int n;
 
-    float calculateEnergy(const std::vector<std::pair<float,float>> *state);
-    float  pAccept(const float curr_cost, const float nghb_cost,  const double temperature);
+    State initialState();
+    bool edgePairOk(int a, int b, int c, int d);
+    static bool isIntersection(Point a, Point b, Point c, Point d);
+    static float orient(Point a, Point b, Point c);
+    float calculateCost(State &state);
+    bool inBoundaries(float x, float y);
+    float updateCost(int vertex);
+    float  pAccept();
     void generateNeighbor();
-    void simulatedAnnealing();
 public:
-    FindStartingPositions(Graph g);
+    explicit FindStartingPositions(Graph *g);
+    void simulatedAnnealing();
+
 };
 
 

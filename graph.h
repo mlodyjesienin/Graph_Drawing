@@ -10,6 +10,12 @@
 
 class GraphDisplay;
 
+struct bfsData{
+    std::vector<bool> visited;
+    std::vector<int> distance;
+    std::vector<int> parent;
+};
+
 class Vertex {
 public:
     int id;
@@ -25,6 +31,7 @@ public:
 
 class Graph {
 public:
+    int type;
     std::vector<Vertex*> vertices;
     int n;
     GraphDisplay * graphDisplay;
@@ -37,6 +44,11 @@ public:
     void print_graph();
 
     void drawGraph();
+
+    struct bfsData BFS(int s);
+
+    std::vector<std::tuple<int, int, float>> getEdgeList();
+    void setRandomWeights(int i,int j);
 };
 
 #endif // GRAPH_H

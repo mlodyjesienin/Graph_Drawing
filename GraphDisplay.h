@@ -35,6 +35,11 @@ private:
     std::vector<sf::Text> idDisplay;
     std::unordered_map<std::pair<int, int>, sf::RectangleShape, pair_hash> edgesDisplay;
     std::unordered_map<std::pair<int, int>, sf::Text, pair_hash> weightsDisplay;
+    std::vector<sf::RectangleShape> buttons;
+    std::vector<sf::Text> buttonLabels;
+    std::vector<std::function<void()>> buttonFunctions;
+    sf::RectangleShape bar;
+    sf::Text errorText;
     sf::Font font;
     int idFontSize;
     int weightFontSize;
@@ -56,7 +61,11 @@ private:
     void setUpID(int i);
     void setUpVertices(int i);
     void windowDraw();
-
+    void addButton(const sf::Vector2f& size, const sf::Vector2f& position, const std::function<void()>& function, const std::string& label);
+    void showBFS();
+    void resetAll();
+    void showShortestPath();
+    void showKruskal();
 
 public:
     explicit GraphDisplay(Graph *graph);

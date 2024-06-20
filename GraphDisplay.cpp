@@ -2,7 +2,8 @@
 #include "graph.h"
 #include <cmath>
 #include <filesystem>
-
+#include <csignal>
+#include <numeric>
 
 GraphDisplay::GraphDisplay(Graph *graphArg) : windowWidth(WINDOW_WIDTH), windowHeight(WINDOW_HEIGHT), graph(graphArg), draggingIndex(-1),
             weightFontSize(18){
@@ -18,6 +19,7 @@ GraphDisplay::GraphDisplay(Graph *graphArg) : windowWidth(WINDOW_WIDTH), windowH
         std::cerr << "Error loading font from calibri-regular.ttf\n";
         exit(-1);
     }
+    if(graph->type==0) isWeightDisplayed = false;
 }
 
 GraphDisplay::~GraphDisplay() {
@@ -70,6 +72,23 @@ void GraphDisplay::setUpID(int i){
     idDisplay.back().setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
     idDisplay.back().setPosition(vertices[i]->x, vertices[i]->y);
 }
+void GraphDisplay::addButton(const sf::Vector2f& size, const sf::Vector2f& position, const std::function<void()>& function, const std::string& label) {
+    sf::RectangleShape button;
+    button.setSize(size);
+    button.setFillColor(sf::Color(100, 100, 250));
+    button.setPosition(position);
+    buttons.push_back(button);
+    buttonFunctions.push_back(function);
+
+    sf::Text text;
+    text.setFont(font);
+    text.setString(label);
+    text.setCharacterSize(16);
+    text.setFillColor(sf::Color::White);
+    text.setPosition(position.x + 10, position.y + 5); // Adjust position as needed
+    buttonLabels.push_back(text);
+}
+
 void GraphDisplay::initializeDisplay() {
 
     int n = graph->n;
@@ -77,7 +96,14 @@ void GraphDisplay::initializeDisplay() {
     window.create(sf::VideoMode(windowWidth, windowHeight), "Graph Visualization: ",
                   sf::Style::Titlebar | sf::Style::Close);
 
-    //initialize vertices and description of vertices
+    bar.setSize(sf::Vector2f(window.getSize().x, 50));
+    bar.setFillColor(sf::Color(50, 50, 50));
+    bar.setPosition(0, 0);
+
+    // Initialize buttons
+    addButton(sf::Vector2f(100, 30), sf::Vector2f(10, 10), [this] { showBFS(); },"BFS");
+    addButton(sf::Vector2f(100, 30), sf::Vector2f(120, 10), [this] {showShortestPath(); }, "PATH");
+    addButton(sf::Vector2f(100, 30), sf::Vector2f(230, 10), [this] {showKruskal();}, "MST");
     for (int i = 0; i < n; ++i) {
         setUpVertices(i);
         if(isIdDisplayed) setUpID(i);
@@ -134,9 +160,16 @@ void GraphDisplay::draw() {
                                 break;
                             }
                         }
+                        for(int i=0; i< buttons.size(); i++){
+                            if (buttons[i].getGlobalBounds().contains(mousePos)){
+                                buttonFunctions[i]();
+                                break;
+                            }
+                        }
                         if (flag) {
                             clearSelection();
                         }
+
                     }
                     break;
 
@@ -191,7 +224,15 @@ void GraphDisplay::windowDraw(){
         }
     }
 
+    window.draw(bar);
 
+    for(const auto& button : buttons) {
+        window.draw(button);
+    }
+
+    for(const auto& label: buttonLabels){
+        window.draw(label);
+    }
     window.display();
 }
 void GraphDisplay::clearSelection(){
@@ -240,5 +281,148 @@ void GraphDisplay::dragVertexHandler(sf::Vector2f offset){
         weightText.setPosition(midpoint);
 
 
+    }
+
+}
+void GraphDisplay::showBFS() {
+    if(selected.size() != 1){
+        std::cout << "nie!" << std::endl;
+        return;
+    }
+    struct bfsData data = graph->BFS(selected[0]);
+    auto maxDepthIter = std::max_element(data.distance.begin(), data.distance.end());
+    int maxDepth;
+    if (maxDepthIter != data.distance.end()) {
+         maxDepth = *maxDepthIter;
+    }
+    int depth = 1;
+    while(depth <= maxDepth){
+        for(int i=0; i<graph->n; i++){
+            if(data.distance[i]==depth){
+                int j = data.parent[i];
+                std::pair<int, int> edgeKey = (i < j) ? std::make_pair(i, j)
+                                                                           : std::make_pair(j, i);
+                auto edge = &edgesDisplay[edgeKey];
+                edge->setFillColor(sf::Color::Green);
+                verticesDisplay[i].setFillColor(sf::Color::Green);
+            }
+        }
+        windowDraw();
+        depth++;
+        sleep(2);
+
+    }
+    sleep(4);
+    resetAll();
+
+}
+
+void GraphDisplay::showShortestPath(){
+    if(selected.size() != 2){
+        std::cout << "nie!" << std::endl;
+        return;
+    }
+    struct bfsData data = graph->BFS(selected[0]);
+    int s = selected[0];
+    int t = selected[1];
+    std::vector<int> path;
+    int tmp = t;
+    path.push_back(tmp);
+    while(data.parent[tmp]!=s){
+        tmp = data.parent[tmp];
+        path.push_back(tmp);
+    }
+    if(path[path.size()-1]!=s) path.push_back(s);
+
+    std::reverse(path.begin(), path.end());
+    int maxDepth = data.distance[t];
+    int depth = 1;
+    while(depth <= maxDepth){
+        for(int i=0; i<graph->n; i++){
+            if(data.distance[i]==depth){
+                int j = data.parent[i];
+                std::pair<int, int> edgeKey = (i < j) ? std::make_pair(i, j)
+                                                      : std::make_pair(j, i);
+                auto edge = &edgesDisplay[edgeKey];
+                edge->setFillColor(sf::Color::Green);
+                verticesDisplay[i].setFillColor(sf::Color::Green);
+                edgeKey = (path[depth-1] < path[depth]) ? std::make_pair(path[depth-1], path[depth])
+                                  : std::make_pair(path[depth], path[depth-1]);
+                auto edge2 = &edgesDisplay[edgeKey];
+                edge2->setFillColor(sf::Color::Red);
+                verticesDisplay[path[depth]].setFillColor(sf::Color::Red);
+            }
+        }
+        windowDraw();
+        depth++;
+        sleep(2);
+
+    }
+    sleep(4);
+    resetAll();
+}
+
+using Edge = std::tuple<int, int, float>;
+
+void GraphDisplay::showKruskal() {
+    std::vector<Edge> edges = graph->getEdgeList();
+    // Sort edges by weight
+    std::sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {
+        return std::get<2>(a) < std::get<2>(b);
+    });
+
+    int n = graph->n;
+
+    std::vector<int> parent(n);
+    std::iota(parent.begin(), parent.end(), 0); // Initialize each vertex as its own parent
+
+    std::function<int(int)> find = [&](int u) {
+        if (parent[u] != u) {
+            parent[u] = find(parent[u]);
+        }
+        return parent[u];
+    };
+
+    auto unite = [&](int u, int v) {
+        int root_u = find(u);
+        int root_v = find(v);
+        if (root_u != root_v) {
+            parent[root_v] = root_u;
+        }
+    };
+
+    std::vector<Edge> mst;
+    for (const Edge& edge : edges) {
+        int u = std::get<0>(edge);
+        int v = std::get<1>(edge);
+        std::pair<int, int> edgeKey = (u < v) ? std::make_pair(u, v)
+                                              : std::make_pair(v, u);
+        auto edgeDis = &edgesDisplay[edgeKey];
+        edgeDis->setFillColor(sf::Color::Green);
+        float weight = std::get<2>(edge);
+        if (find(u) != find(v)) {
+            unite(u, v);
+
+            edgeDis->setFillColor(sf::Color::Red);
+            verticesDisplay[u].setFillColor(sf::Color::Red);
+            verticesDisplay[v].setFillColor(sf::Color::Red);
+            windowDraw();
+            sleep(1);
+            mst.push_back(edge);
+        }
+    }
+    sleep(4);
+    resetAll();
+}
+
+
+
+void GraphDisplay::resetAll() {
+    for(auto& vertex: verticesDisplay){
+        vertex.setFillColor(VertexColor);
+    }
+    for(auto& edgePair:edgesDisplay){
+        auto edge = &edgePair.second;
+        edge->setFillColor(sf::Color::Black);
     }
 }
