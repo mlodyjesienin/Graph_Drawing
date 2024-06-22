@@ -34,6 +34,9 @@ public:
     int type;
     std::vector<Vertex*> vertices;
     int n;
+    std::vector<std::pair<float, float>> finalPositions;
+    float firstCost;
+    float minimalCost;
     GraphDisplay * graphDisplay;
 
 public:

@@ -66,13 +66,16 @@ private:
     void resetAll();
     void showShortestPath();
     void showKruskal();
-
+    void drawGraphSpecifics();
+    void firstFrames();
 public:
     explicit GraphDisplay(Graph *graph);
 
     ~GraphDisplay();
 
     void draw();
+
+
 };
 
 
