@@ -116,4 +116,17 @@ The program utilizes the `Simulated Annealing` metaheuristic to minimize the num
 
 5. **Final Solution**
    - The best solution found after all iterations represents the final optimized positioning of the vertices.
+# Example inputs:
+If you are willing to see how the programm works, here are a few graphs that may help you see it:
+- small graph consisting of 5 vertices:
+    ```
+    [[1,2],[0,3,4],[0,3],[1,2,4],[1,3]] 
+    ```
+- bigger graph consisting of 20 vertices:
+  ```
+
+    [[1, 2, 3], [0, 4, 5], [0, 6, 7], [0, 8, 9], [1, 10, 11], [1, 12, 13], [2, 14, 15], [2, 16, 17], [3, 18, 19], [3, 15, 17], [4, 18, 19], [4, 12, 13], [5, 11, 14], [5, 11, 19], [6, 12, 18], [6, 9, 16], [7, 15, 17], [7, 9, 16], [8, 10, 14], [8, 10, 13]]
+  ```
+
+
 
