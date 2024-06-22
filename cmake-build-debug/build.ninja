@@ -73,6 +73,12 @@ build CMakeFiles/Graph_Drawing.dir/FindStartingPositions.cpp.o: CXX_COMPILER__Gr
   OBJECT_DIR = CMakeFiles/Graph_Drawing.dir
   OBJECT_FILE_DIR = CMakeFiles/Graph_Drawing.dir
 
+build CMakeFiles/Graph_Drawing.dir/MenuDisplay.cpp.o: CXX_COMPILER__Graph_Drawing_Debug /home/jesienin/Desktop/git-repos/Graph_Drawing/MenuDisplay.cpp || cmake_object_order_depends_target_Graph_Drawing
+  DEP_FILE = CMakeFiles/Graph_Drawing.dir/MenuDisplay.cpp.o.d
+  FLAGS = -g
+  OBJECT_DIR = CMakeFiles/Graph_Drawing.dir
+  OBJECT_FILE_DIR = CMakeFiles/Graph_Drawing.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Graph_Drawing
@@ -81,7 +87,7 @@ build CMakeFiles/Graph_Drawing.dir/FindStartingPositions.cpp.o: CXX_COMPILER__Gr
 #############################################
 # Link the executable Graph_Drawing
 
-build Graph_Drawing: CXX_EXECUTABLE_LINKER__Graph_Drawing_Debug CMakeFiles/Graph_Drawing.dir/main.cpp.o CMakeFiles/Graph_Drawing.dir/graph.cpp.o CMakeFiles/Graph_Drawing.dir/GraphDisplay.cpp.o CMakeFiles/Graph_Drawing.dir/FindStartingPositions.cpp.o | /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.5.1 /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.5.1 /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.5.1
+build Graph_Drawing: CXX_EXECUTABLE_LINKER__Graph_Drawing_Debug CMakeFiles/Graph_Drawing.dir/main.cpp.o CMakeFiles/Graph_Drawing.dir/graph.cpp.o CMakeFiles/Graph_Drawing.dir/GraphDisplay.cpp.o CMakeFiles/Graph_Drawing.dir/FindStartingPositions.cpp.o CMakeFiles/Graph_Drawing.dir/MenuDisplay.cpp.o | /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.5.1 /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.5.1 /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.5.1
   FLAGS = -g
   LINK_LIBRARIES = /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.5.1  /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.5.1  /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.5.1
   OBJECT_DIR = CMakeFiles/Graph_Drawing.dir

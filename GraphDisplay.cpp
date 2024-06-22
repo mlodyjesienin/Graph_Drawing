@@ -89,21 +89,9 @@ void GraphDisplay::addButton(const sf::Vector2f& size, const sf::Vector2f& posit
     buttonLabels.push_back(text);
 }
 
-void GraphDisplay::initializeDisplay() {
-
+void GraphDisplay::drawGraphSpecifics(){
     int n = graph->n;
     auto &vertices = graph->vertices;
-    window.create(sf::VideoMode(windowWidth, windowHeight), "Graph Visualization: ",
-                  sf::Style::Titlebar | sf::Style::Close);
-
-    bar.setSize(sf::Vector2f(window.getSize().x, 50));
-    bar.setFillColor(sf::Color(50, 50, 50));
-    bar.setPosition(0, 0);
-
-    // Initialize buttons
-    addButton(sf::Vector2f(100, 30), sf::Vector2f(10, 10), [this] { showBFS(); },"BFS");
-    addButton(sf::Vector2f(100, 30), sf::Vector2f(120, 10), [this] {showShortestPath(); }, "PATH");
-    addButton(sf::Vector2f(100, 30), sf::Vector2f(230, 10), [this] {showKruskal();}, "MST");
     for (int i = 0; i < n; ++i) {
         setUpVertices(i);
         if(isIdDisplayed) setUpID(i);
@@ -133,6 +121,75 @@ void GraphDisplay::initializeDisplay() {
             }
         }
     }
+}
+
+void GraphDisplay::firstFrames(){
+    sf::Text text;
+    text.setFont(font);
+
+    std::stringstream ss;
+    ss << "First iteration number of intersections: " << graph->firstCost;
+    text.setString(ss.str());
+    sf::FloatRect textRect = text.getLocalBounds();
+    text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+    text.setPosition(window.getSize().x / 2.0f, 50.0f);  // 0.0f to position at the top
+    text.setCharacterSize(25);
+    text.setFillColor(sf::Color::Black);
+    drawGraphSpecifics();
+    window.clear(backgroundColor);
+    window.draw(text);
+    for (const auto& pair_edge : edgesDisplay) {
+        const sf::RectangleShape& edge = pair_edge.second;
+        window.draw(edge);
+    }
+
+    for (const auto& vertex : verticesDisplay) {
+        window.draw(vertex);
+    }
+    window.display();
+    sleep(4);
+    verticesDisplay.clear();
+    edgesDisplay.clear();
+    for(auto& vertex : graph->vertices){
+        vertex->x = graph->finalPositions[vertex->id].first;
+        vertex->y = graph->finalPositions[vertex->id].second;
+    }
+    idDisplay.clear();
+    weightsDisplay.clear();
+    drawGraphSpecifics();
+    std::stringstream secondtext;
+    secondtext << "Last iteration number of intersections: " << graph->minimalCost;
+    text.setString(secondtext.str());
+    window.clear(backgroundColor);
+    window.draw(text);
+    for (const auto& pair_edge : edgesDisplay) {
+        const sf::RectangleShape& edge = pair_edge.second;
+        window.draw(edge);
+    }
+
+    for (const auto& vertex : verticesDisplay) {
+        window.draw(vertex);
+    }
+    window.draw(text);
+    window.display();
+
+    sleep(3);
+    window.clear(backgroundColor);
+}
+void GraphDisplay::initializeDisplay() {
+    window.create(sf::VideoMode(windowWidth, windowHeight), "Graph Visualization: ",
+                  sf::Style::Titlebar | sf::Style::Close);
+
+    firstFrames();
+    bar.setSize(sf::Vector2f(window.getSize().x, 50));
+    bar.setFillColor(sf::Color(50, 50, 50));
+    bar.setPosition(0, 0);
+
+    // Initialize buttons
+    addButton(sf::Vector2f(100, 30), sf::Vector2f(10, 10), [this] { showBFS(); },"BFS");
+    addButton(sf::Vector2f(100, 30), sf::Vector2f(120, 10), [this] {showShortestPath(); }, "PATH");
+    addButton(sf::Vector2f(100, 30), sf::Vector2f(230, 10), [this] {showKruskal();}, "MST");
+
 }
 
 void GraphDisplay::draw() {

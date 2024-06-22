@@ -130,15 +130,15 @@ void FindStartingPositions::generateNeighbor() {
 void FindStartingPositions::simulatedAnnealing() {
     srand(static_cast<unsigned int>(time(nullptr)));
     currentState = initialState();
-    //std::copy(currentState.begin(), currentState.end(), best.begin());
     best = currentState;
     currentCost = calculateCost(currentState);
     minimalCost = currentCost;
-    std:: cout << "starting cost: " << currentCost << std::endl;
+    graph->firstCost = currentCost;
+    for(auto vertex : graph->vertices){
+        vertex->x = best[vertex->id].first;
+        vertex->y = best[vertex->id].second;
+    }
     for(; iteration < MAX_ITERATIONS; iteration++){
-        if(iteration%100==0){
-            std::cout << iteration << " cost: " << currentCost << std::endl;
-        }
         generateNeighbor();
         if(currentCost <= minimalCost){
             minimalCost = currentCost;
@@ -147,9 +147,6 @@ void FindStartingPositions::simulatedAnnealing() {
         temperature*=alpha;
     }
 
-    std::cout << "final cost: " << minimalCost << std::endl;
-    for(auto vertex : graph->vertices){
-        vertex->x = best[vertex->id].first;
-        vertex->y = best[vertex->id].second;
-    }
+    graph->minimalCost = minimalCost;
+    graph->finalPositions = best;
 }
