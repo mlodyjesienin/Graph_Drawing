@@ -5,7 +5,10 @@
 A small application for visualizing graphs and graph algorithms, developed for the C++ Course at AGH UST in 2024.
 
 ## Video presentation: 
-[Graph Visulaization](https://github.com/mlodyjesienin/Graph_Drawing/blob/main/graph_drawing_showcase.mp4)
+
+
+https://github.com/mlodyjesienin/Graph_Drawing/assets/127685479/0f03a678-7c1e-4101-8c8a-e861d5cc7569
+
 
 ## Dependencies
 
