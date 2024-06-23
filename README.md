@@ -4,6 +4,9 @@
 
 A small application for visualizing graphs and graph algorithms, developed for the C++ Course at AGH UST in 2024.
 
+## Video presentation: 
+[Graph Visulaization](https://github.com/mlodyjesienin/Graph_Drawing/blob/main/graph_drawing_showcase.mp4)
+
 ## Dependencies
 
 To build and run the project, the SFML library is required.
